@@ -1,6 +1,6 @@
 # Austin Picks — Product Requirements Document
 
-**Version:** 1.0  
+**Version:** 1.1  
 **Status:** Active  
 **Owner:** Product  
 **Last updated:** August 2026
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-Austin Picks is an AI-powered restaurant discovery tool for Austin, Texas. It fetches live venue data from Google Places, scores each place using a proprietary quality-confidence-value formula, and uses Gemini to explain why each pick is the right choice for the user — in plain English. The result is a focused, opinionated shortlist rather than a ranked list of hundreds.
+Austin Picks is an AI-powered restaurant discovery tool for Austin, Texas. It fetches live venue data from Google Places, scores each place using a proprietary quality-confidence-value formula, and uses Gemini to explain why each pick is the right choice — in plain English. The result is a focused, opinionated shortlist rather than a ranked list of hundreds.
 
 The app solves a specific, recurring frustration: opening Google Maps or Yelp and getting overwhelmed by options, noise, and paid placements. Austin Picks always gives you exactly four automatic top picks (Best Overall, Best Brunch, Best Value, Hidden Gem) and a natural-language search flow that produces a shortlist of three.
 
@@ -65,9 +65,9 @@ Choosing where to eat in Austin is harder than it should be. The city has thousa
 **Actor:** Any user  
 **Trigger:** Opens the app  
 **Flow:**
-1. App loads with four automatic picks visible on first scroll
+1. React SPA loads instantly; four skeleton cards pulse while data fetches
 2. Each pick is scored live from Google Places data (rating, review volume, price level)
-3. Gemini writes a 1–2 sentence explanation for each, inferring themes from review signals without quoting verbatim
+3. Gemini writes a 2-sentence explanation for each, inferring themes from review signals without quoting verbatim
 4. User reads the card, taps "Open in Maps", goes
 
 **Why it matters:** Most users don't know what they want beyond a category. Giving them four confident picks with clear rationale removes decision fatigue entirely.
@@ -85,11 +85,11 @@ Choosing where to eat in Austin is harder than it should be. The city has thousa
 - "something near South Congress that's not a chain"
 
 **Flow:**
-1. Gemini parses the query into structured filters: `category`, `price_preference`, `theme`, `refined_query`
+1. Gemini parses the query into a refined Google Places search string
 2. App calls Google Places Text Search with the refined query
-3. Results are scored and ranked
+3. Results are scored and ranked by composite formula
 4. Gemini selects the top three and writes explanations tailored to the user's original query
-5. Three cards are shown — same visual format as the automatic picks
+5. Three cards appear — same visual format as the automatic picks
 
 **Why it matters:** Search intent is rich and contextual. A raw keyword search for "brunch" returns hundreds of results. The agent flow interprets intent and returns three confident, explained picks.
 
@@ -100,7 +100,7 @@ Choosing where to eat in Austin is harder than it should be. The city has thousa
 **Trigger:** Sees the Hidden Gem pick on the automatic Top Picks panel  
 **Selection criteria:**
 - Rating ≥ 4.3 stars
-- Review count < 200 (not yet mainstream)
+- Review count < 300 (not yet mainstream)
 - Scored competitively against the full candidate pool
 
 **Why it matters:** High-rating, low-volume venues are systematically buried in traditional ranking algorithms because they don't have enough reviews to rank highly. Austin Picks surfaces them as a feature, not a footnote.
@@ -124,13 +124,14 @@ Choosing where to eat in Austin is harder than it should be. The city has thousa
 - **Best Overall** — highest composite score across all categories
 - **Best Brunch** — top scorer among cafes, coffee shops, and brunch-typed venues
 - **Best Value** — top scorer among Free or $ price-level venues
-- **Hidden Gem** — top scorer with rating ≥ 4.3 and review count < 200
+- **Hidden Gem** — top scorer with rating ≥ 4.3 and review count < 300
 
 All picks are refreshed per session from live Google Places data. No curation, no editorial bias, no paid placements.
 
-### F-2: AI Explanations
-- Each card shows a Gemini-written 1–2 sentence explanation
+### F-2: AI Explanations (Gemini)
+- Each card shows a Gemini-written 2-sentence explanation
 - Explanations reference inferred review themes (atmosphere, food quality, service) without quoting any review verbatim
+- Powered by `gemini-3-flash-preview` via Replit's managed AI proxy
 - If Gemini is unavailable, cards degrade gracefully to showing the editorial summary from Google Places
 
 ### F-3: Scoring Engine
@@ -142,13 +143,16 @@ Composite 0–1 score weighted across:
 This formula rewards places that are genuinely well-rated, trusted by a meaningful number of people, and accessible on price — not just the most-reviewed or closest venue.
 
 ### F-4: Ask the Agent Search
-- Free-text input parsed by Gemini into structured filters
+- Free-text input parsed by Gemini into a refined Places search query
 - Live Google Places Text Search using the refined query
 - Results scored, ranked, and top-three selected and explained by Gemini
 - Graceful degradation: if Gemini is unavailable, raw query is used directly
 
 ### F-5: Google Maps Link
 Every card links directly to the Google Maps listing, so users can see photos, hours, and directions without leaving the Austin Picks flow.
+
+### F-6: Skeleton Loading States
+The React frontend shows animated skeleton cards while data loads (~8–12s for Places + Gemini). Users see the page structure immediately rather than a blank screen.
 
 ---
 
@@ -160,8 +164,9 @@ Every card links directly to the Google Maps listing, so users can see photos, h
 | Reservations / booking integration | Third-party API dependency; changes the product category |
 | Neighborhood or cuisine filters | Adds UI surface area; Ask the Agent handles this via natural language |
 | Review display | Avoided intentionally — review text is session-only, never stored or shown |
-| Push notifications / daily picks digest | Requires a mobile app or email integration |
+| Push notifications / daily picks digest | Requires mobile app or email integration |
 | Multiple cities | Austin-specific scoring and query defaults are intentional for v1 focus |
+| Server-side caching | Deferred; each request makes fresh Places + Gemini calls |
 
 ---
 
@@ -180,29 +185,47 @@ Every card links directly to the Google Maps listing, so users can see photos, h
 ## 8. Technical Architecture
 
 ```
-┌─────────────┐    ┌───────────────────┐    ┌──────────────────┐
-│   Streamlit │    │  Google Places    │    │  Gemini API      │
-│   Frontend  │───▶│  Text Search API  │    │  (generateContent│
-│   (app.py)  │    │  + Place Details  │    │   + JSON mode)   │
-└─────────────┘    └───────────────────┘    └──────────────────┘
-       │                    │                        │
-       ▼                    ▼                        ▼
-  places_client.py    Raw place data          agent.py
-  (search + details   (name, rating,          (query parsing,
-   normalization)      reviews, price,         blurb generation,
-                       maps URI)               recommendation
-                            │                  ranking)
-                            ▼
-                       scoring.py
-                       (composite 0–1
-                        score per place)
+Browser
+   │
+   ├── / ──────────────────▶  austin-picks-web (React + Tailwind, Vite)
+   │                               Skeleton → Cards → Maps link
+   │
+   └── /api/* ─────────────▶  api-server (Node.js / Express)
+                                    │
+                                    ├── GET /api/top-picks
+                                    │       ├── Places Text Search × 3 (restaurant/cafe/bar)
+                                    │       ├── Place Details × top-8 per query
+                                    │       ├── Composite scoring (rating · volume · price)
+                                    │       ├── Role selection (Overall/Brunch/Value/Gem)
+                                    │       └── Gemini blurb generation
+                                    │
+                                    └── POST /api/search
+                                            ├── Gemini query parsing → refined_query
+                                            ├── Places Text Search
+                                            ├── Composite scoring + ranking
+                                            └── Gemini top-3 selection + explanations
 ```
 
+**Production services (Replit Autoscale):**
+
+| Service | Path | Runtime |
+|---|---|---|
+| `austin-picks-web` | `/` | Static React build (no server process) |
+| `api-server` | `/api` | Node.js — calls Places + Gemini directly |
+
+**Development extras:**
+- `api.py` (FastAPI, port 5000) — Python backend used during development; Node.js api-server proxied to it in dev for testing
+- Vite dev server proxies `/api` → Node.js api-server (port 8080)
+
 **Key design decisions:**
-- Review text is read live and passed to Gemini for theme inference — it is never written to disk or a database
-- Gemini is called with `responseMimeType: application/json` to enforce structured output, eliminating markdown-fence parsing failures
-- All Places queries are scoped to Austin, TX at the query level (not via location bias) so the results are city-specific regardless of where the user is
-- Session state caches the Top Picks result for the duration of a user session to avoid redundant API calls on re-renders
+
+| Decision | Rationale |
+|---|---|
+| Node.js implements all API logic for production | Each Replit Autoscale service runs in an isolated Cloud Run container — cross-container `localhost` calls don't work in production |
+| `maxOutputTokens: 8192` for Gemini | `gemini-3-flash-preview` is a thinking model; thinking tokens count against the output limit — 1024 caused JSON truncation mid-response |
+| Review text never persisted | Passes through Gemini for theme inference only; never written to disk or database |
+| `publicDir` static serving for React SPA | No web server process needed in production — Replit serves the built files directly |
+| `Promise.allSettled` for Places queries | Individual query failures don't block the other categories from returning results |
 
 ---
 
@@ -210,27 +233,31 @@ Every card links directly to the Google Maps listing, so users can see photos, h
 
 | Risk | Likelihood | Impact | Mitigation |
 |---|---|---|---|
-| Google Places API quota exhaustion | Medium | High | Three-query strategy (restaurant/cafe/bar) uses Text Search, not per-ID calls; cache session results |
-| Gemini response rate limit | Medium | Low | Graceful degradation to editorial summaries from Places; explanations are enhancement, not core |
-| Places API returning 403 (disabled) | Low (post-setup) | High | Friendly error shown with setup instructions; app does not crash |
+| Google Places API quota exhaustion | Medium | High | Three-query strategy (restaurant/cafe/bar); detail fetches limited to top-8 candidates per query |
+| Gemini response truncation | Low (mitigated) | Medium | `maxOutputTokens: 8192`; `extractJson` strips code-fence markers and tries multiple parse strategies |
+| Gemini rate limit / unavailability | Medium | Low | Graceful degradation to Places editorial summaries; explanations are enhancement, not core |
+| Places API returning 403 | Low (post-setup) | High | Friendly error shown; app does not crash or return empty state silently |
 | Hidden Gem selection finding no candidate | Low | Low | Falls back to next-highest scorer from any category |
-| Gemini hallucinating place facts | Low | Medium | Prompt explicitly restricts explanations to inferred review themes; no factual claims allowed |
+| Autoscale cold-start latency | Medium | Low | Places + Gemini calls take ~8–12s regardless; cold start adds ~1–2s on top |
 
 ---
 
 ## 10. Roadmap
 
-### Now (v1 — shipped)
+### Now (v1.1 — shipped)
 - Four automatic Top Picks with live data and AI explanations
 - Ask the Agent natural-language search flow
-- Dark editorial UI with burnt-orange brand accent
+- **React + Tailwind frontend** (replaced Streamlit) — warm cream editorial design, skeleton loading, colored card badges
+- **Node.js API server** — native Places + Gemini implementation, production-safe (no cross-container proxy)
+- **FastAPI Python backend** — retained for development convenience
 - Google Maps deep link on every card
 - Graceful degradation when APIs are unavailable
+- Deployed on Replit Autoscale (React SPA as static + Node.js API)
 
-### Next (v1.1)
+### Next (v1.2)
+- Server-side caching for Top Picks (15-minute TTL) — reduce Places + Gemini spend and serve repeat visitors instantly
+- Startup health check — fail fast if Places API key is invalid rather than silently returning empty cards
 - Neighborhood filter (South Congress, East Austin, Domain, etc.)
-- Cuisine-type filter surface in the agent search bar
-- Refresh button for Top Picks without full page reload
 
 ### Later (v2)
 - Mobile app (Expo / React Native) with the same scoring and agent logic
