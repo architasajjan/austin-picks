@@ -17,205 +17,240 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-# ── custom theme ──────────────────────────────────────────────────────────────
+# ── theme ─────────────────────────────────────────────────────────────────────
 st.markdown(
     """
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-    /* global reset */
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
     .stApp { background: #0f0d0b; color: #f5f0eb; }
 
-    /* hide streamlit chrome */
+    /* hide Streamlit chrome */
     #MainMenu, footer, header { visibility: hidden; }
-    .block-container { padding: 0 !important; max-width: 100% !important; }
 
-    /* ── hero ── */
+    /* main content column — uniform horizontal padding */
+    .block-container {
+        padding: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* every Streamlit column group gets left/right padding */
+    [data-testid="stHorizontalBlock"] {
+        padding: 0 64px;
+        gap: 20px !important;
+    }
+
+    /* ── hero ─────────────────────────────────── */
     .ap-hero {
         background: linear-gradient(135deg, #1a1108 0%, #0f0d0b 60%);
         border-bottom: 1px solid #2a2218;
-        padding: 56px 64px 48px;
+        padding: 56px 64px 52px;
     }
     .ap-wordmark {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 700;
-        letter-spacing: .18em;
+        letter-spacing: .2em;
         text-transform: uppercase;
         color: #c9813b;
-        margin-bottom: 20px;
+        margin-bottom: 22px;
     }
     .ap-hero h1 {
-        font-size: clamp(40px, 5vw, 64px);
+        font-size: clamp(40px, 5vw, 68px);
         font-weight: 800;
-        line-height: 1.05;
+        line-height: 1.04;
         color: #f5f0eb;
-        margin: 0 0 16px;
+        margin: 0 0 18px;
     }
     .ap-hero p {
-        font-size: 18px;
-        color: #9e9080;
-        max-width: 520px;
-        line-height: 1.6;
+        font-size: 17px;
+        color: #7a6e63;
+        max-width: 480px;
+        line-height: 1.65;
         margin: 0;
     }
 
-    /* ── section ── */
-    .ap-section {
-        padding: 48px 64px;
+    /* ── section wrapper ──────────────────────── */
+    .ap-section-hdr {
+        padding: 44px 64px 28px;
     }
-    .ap-section-header {
-        margin-bottom: 32px;
-    }
-    .ap-section-header h2 {
-        font-size: 26px;
+    .ap-section-hdr h2 {
+        font-size: 22px;
         font-weight: 700;
         color: #f5f0eb;
-        margin: 0 0 6px;
+        margin: 0 0 5px;
+        letter-spacing: -.01em;
     }
-    .ap-section-header p {
-        font-size: 15px;
-        color: #6e6358;
-        margin: 0;
-    }
-    .ap-divider {
-        border: none;
-        border-top: 1px solid #1e1a14;
+    .ap-section-hdr p {
+        font-size: 14px;
+        color: #5c5249;
         margin: 0;
     }
 
-    /* ── pick badge ── */
+    /* padding below the cards grid */
+    .ap-section-footer { padding: 32px 0; }
+
+    /* ── divider ──────────────────────────────── */
+    .ap-divider {
+        border: none;
+        border-top: 1px solid #1a1612;
+        margin: 0;
+    }
+
+    /* ── search area ──────────────────────────── */
+    .ap-ask-hdr {
+        padding: 44px 64px 24px;
+    }
+    .ap-ask-hdr h2 {
+        font-size: 22px;
+        font-weight: 700;
+        color: #f5f0eb;
+        margin: 0 0 5px;
+        letter-spacing: -.01em;
+    }
+    .ap-ask-hdr p {
+        font-size: 14px;
+        color: #5c5249;
+        margin: 0;
+    }
+    .ap-input-wrap {
+        padding: 0 64px 48px;
+    }
+
+    /* input field */
+    .ap-input-wrap .stTextInput > div > div {
+        background: #13110d !important;
+        border: 1.5px solid #2a2218 !important;
+        border-radius: 10px !important;
+    }
+    .ap-input-wrap .stTextInput input {
+        background: transparent !important;
+        color: #f5f0eb !important;
+        font-size: 15px !important;
+        padding: 14px 18px !important;
+        caret-color: #c9813b;
+    }
+    .ap-input-wrap .stTextInput input:focus {
+        outline: none !important;
+    }
+    .ap-input-wrap .stTextInput > div > div:focus-within {
+        border-color: #c9813b !important;
+        box-shadow: 0 0 0 3px #c9813b14 !important;
+    }
+    .ap-input-wrap .stTextInput input::placeholder { color: #3d352d !important; }
+
+    /* ── pick badge ───────────────────────────── */
     .ap-badge {
         display: inline-block;
         font-size: 10px;
         font-weight: 700;
-        letter-spacing: .14em;
+        letter-spacing: .15em;
         text-transform: uppercase;
-        padding: 4px 10px;
+        padding: 3px 9px;
         border-radius: 4px;
-        margin-bottom: 14px;
+        margin-bottom: 12px;
     }
-    .badge-overall  { background: #c9813b22; color: #c9813b; border: 1px solid #c9813b44; }
-    .badge-brunch   { background: #c96b7a22; color: #c96b7a; border: 1px solid #c96b7a44; }
-    .badge-value    { background: #5da56822; color: #5da568; border: 1px solid #5da56844; }
-    .badge-gem      { background: #7b6ec622; color: #a099e0; border: 1px solid #7b6ec644; }
-    .badge-search   { background: #3b82f622; color: #7db5f7; border: 1px solid #3b82f644; }
+    .badge-overall { background: #c9813b1a; color: #c9813b; border: 1px solid #c9813b33; }
+    .badge-brunch  { background: #c96b7a1a; color: #c96b7a; border: 1px solid #c96b7a33; }
+    .badge-value   { background: #5da5681a; color: #5da568; border: 1px solid #5da56833; }
+    .badge-gem     { background: #7b6ec61a; color: #a099e0; border: 1px solid #7b6ec633; }
+    .badge-search  { background: #3b82f61a; color: #7db5f7; border: 1px solid #3b82f633; }
 
-    /* ── place card ── */
+    /* ── place card ───────────────────────────── */
     .ap-card {
-        background: #15120d;
-        border: 1px solid #2a2218;
+        background: #131009;
+        border: 1px solid #231f18;
         border-radius: 12px;
-        padding: 24px;
+        padding: 22px 22px 20px;
         height: 100%;
-        transition: border-color .2s;
+        box-sizing: border-box;
     }
-    .ap-card:hover { border-color: #c9813b55; }
     .ap-card-name {
-        font-size: 19px;
+        font-size: 17px;
         font-weight: 700;
         color: #f5f0eb;
-        margin: 4px 0 6px;
+        margin: 0 0 5px;
         line-height: 1.25;
     }
     .ap-card-meta {
-        font-size: 13px;
-        color: #6e6358;
-        margin-bottom: 14px;
+        font-size: 12px;
+        color: #5c5249;
+        margin-bottom: 12px;
+        letter-spacing: .01em;
     }
     .ap-rating-row {
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin-bottom: 14px;
+        gap: 7px;
+        margin-bottom: 12px;
     }
-    .ap-stars {
-        color: #c9813b;
-        font-size: 14px;
-    }
-    .ap-rating-num {
-        font-size: 15px;
-        font-weight: 700;
-        color: #f5f0eb;
-    }
-    .ap-rating-count {
-        font-size: 13px;
-        color: #6e6358;
-    }
+    .ap-stars  { color: #c9813b; font-size: 13px; letter-spacing: .04em; }
+    .ap-rating-num   { font-size: 14px; font-weight: 700; color: #f5f0eb; }
+    .ap-rating-count { font-size: 12px; color: #5c5249; }
     .ap-blurb {
-        font-size: 14px;
-        color: #9e9080;
+        font-size: 13px;
+        color: #8a7e73;
         line-height: 1.65;
-        margin-bottom: 18px;
+        margin-bottom: 16px;
     }
     .ap-map-link a {
         display: inline-block;
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 600;
         color: #c9813b;
         text-decoration: none;
-        border: 1px solid #c9813b44;
+        border: 1px solid #c9813b33;
         border-radius: 6px;
-        padding: 7px 14px;
-        transition: background .15s;
+        padding: 6px 13px;
     }
-    .ap-map-link a:hover { background: #c9813b18; }
 
-    /* ── search bar ── */
-    .ap-search-wrap {
-        padding: 48px 64px;
-        background: #0a0806;
-        border-top: 1px solid #1e1a14;
+    /* ── result sub-header ────────────────────── */
+    .ap-result-hdr {
+        padding: 28px 64px 20px;
     }
-    .ap-search-wrap .stTextInput input {
-        background: #15120d !important;
-        border: 1px solid #2a2218 !important;
-        border-radius: 10px !important;
-        color: #f5f0eb !important;
-        font-size: 16px !important;
-        padding: 14px 18px !important;
-        caret-color: #c9813b;
+    .ap-result-hdr h3 {
+        font-size: 18px;
+        font-weight: 700;
+        color: #f5f0eb;
+        margin: 0 0 4px;
     }
-    .ap-search-wrap .stTextInput input:focus {
-        border-color: #c9813b !important;
-        box-shadow: 0 0 0 3px #c9813b18 !important;
+    .ap-result-hdr p {
+        font-size: 13px;
+        color: #5c5249;
+        margin: 0;
     }
-    .ap-search-wrap .stTextInput input::placeholder { color: #4a4035 !important; }
 
-    /* ── spinner override ── */
+    /* ── spinner ──────────────────────────────── */
     .stSpinner > div { border-top-color: #c9813b !important; }
 
-    /* ── alert overrides ── */
-    .stAlert { background: #15120d !important; border-color: #2a2218 !important; }
+    /* ── alerts ───────────────────────────────── */
+    .stAlert { background: #13110d !important; border-color: #231f18 !important; }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-
 # ── helpers ───────────────────────────────────────────────────────────────────
 
 BADGE_CLASS = {
     "Best Overall": "badge-overall",
-    "Best Brunch": "badge-brunch",
-    "Best Value": "badge-value",
-    "Hidden Gem": "badge-gem",
+    "Best Brunch":  "badge-brunch",
+    "Best Value":   "badge-value",
+    "Hidden Gem":   "badge-gem",
 }
 
 STAR_MAP = {5: "★★★★★", 4: "★★★★☆", 3: "★★★☆☆", 2: "★★☆☆☆", 1: "★☆☆☆☆"}
 
 
 def _stars(rating: float | None) -> str:
-    if rating is None:
-        return ""
-    return STAR_MAP.get(round(rating), "★★★★☆")
+    return STAR_MAP.get(round(rating), "★★★★☆") if rating else ""
 
 
 def load_top_pick_candidates() -> list[dict[str, Any]]:
     queries = [
         ("Restaurant", "best restaurants in Austin TX"),
-        ("Cafe", "best cafes and brunch in Austin TX"),
-        ("Bar", "best bars in Austin TX"),
+        ("Cafe",       "best cafes and brunch in Austin TX"),
+        ("Bar",        "best bars in Austin TX"),
     ]
     places_by_id: dict[str, dict[str, Any]] = {}
     for category, query in queries:
@@ -231,38 +266,42 @@ def select_top_pick_roles(places: list[dict[str, Any]]) -> list[tuple[str, dict[
     used: set[str] = set()
 
     def choose(predicate, fallback=True):
-        available = [p for p in places if p.get("id") not in used and predicate(p)]
-        if not available and fallback:
-            available = [p for p in places if p.get("id") not in used]
-        if not available:
+        pool = [p for p in places if p.get("id") not in used and predicate(p)]
+        if not pool and fallback:
+            pool = [p for p in places if p.get("id") not in used]
+        if not pool:
             return None
-        selected = max(available, key=lambda p: p.get("score", 0))
-        used.add(selected.get("id", ""))
-        return selected
+        best = max(pool, key=lambda p: p.get("score", 0))
+        used.add(best.get("id", ""))
+        return best
 
     roles: list[tuple[str, dict[str, Any]]] = []
+
     best_overall = choose(lambda _: True)
     if best_overall:
         roles.append(("Best Overall", best_overall))
+
     best_brunch = choose(
-        lambda p: (
-            p.get("category", "").lower() in {"cafe", "coffee shop", "bakery"}
-            or any("brunch" in item.lower() for item in p.get("types", []))
-        )
+        lambda p: p.get("category", "").lower() in {"cafe", "coffee shop", "bakery"}
+        or any("brunch" in t.lower() for t in p.get("types", []))
     )
     if best_brunch:
         roles.append(("Best Brunch", best_brunch))
+
     best_value = choose(
         lambda p: p.get("price_level") in {"PRICE_LEVEL_FREE", "PRICE_LEVEL_INEXPENSIVE"}
         or p.get("price_display") in {"Free", "$"}
     )
     if best_value:
         roles.append(("Best Value", best_value))
+
     hidden_gem = choose(
-        lambda p: (p.get("rating") or 0) >= 4.3 and (p.get("user_rating_count") or 0) < 200
+        lambda p: (p.get("rating") or 0) >= 4.3
+        and (p.get("user_rating_count") or 0) < 200
     )
     if hidden_gem:
         roles.append(("Hidden Gem", hidden_gem))
+
     return roles
 
 
@@ -273,16 +312,16 @@ def render_place_card(
     explanation: str | None = None,
 ) -> None:
     badge_class = BADGE_CLASS.get(label or "", "badge-search")
-    badge_html = f'<div class="ap-badge {badge_class}">{label}</div>' if label else ""
-    name = place.get("name", "Unnamed place")
+    badge_html  = f'<div class="ap-badge {badge_class}">{label}</div>' if label else ""
+
+    name     = place.get("name", "Unnamed place")
     category = place.get("category", "Place")
-    price = place.get("price_display", "$$")
-    rating = place.get("rating")
-    count = place.get("user_rating_count") or 0
-    body = explanation or place.get("editorial_summary") or ""
+    price    = place.get("price_display", "$$")
+    rating   = place.get("rating")
+    count    = place.get("user_rating_count") or 0
+    body     = explanation or place.get("editorial_summary") or ""
     maps_uri = place.get("google_maps_uri", "")
 
-    rating_html = ""
     if rating:
         rating_html = f"""
         <div class="ap-rating-row">
@@ -291,10 +330,10 @@ def render_place_card(
             <span class="ap-rating-count">({count:,} ratings)</span>
         </div>"""
     else:
-        rating_html = '<p class="ap-rating-count" style="margin-bottom:14px">Rating unavailable</p>'
+        rating_html = '<p class="ap-rating-count" style="margin-bottom:12px">Rating unavailable</p>'
 
     blurb_html = f'<p class="ap-blurb">{body}</p>' if body else ""
-    map_html = f'<div class="ap-map-link"><a href="{maps_uri}" target="_blank">Open in Maps ↗</a></div>' if maps_uri else ""
+    map_html   = f'<div class="ap-map-link"><a href="{maps_uri}" target="_blank">Open in Maps ↗</a></div>' if maps_uri else ""
 
     st.markdown(
         f"""
@@ -315,22 +354,18 @@ def render_place_card(
 
 def show_top_picks() -> None:
     st.markdown(
-        """
-        <div class="ap-section">
-            <div class="ap-section-header">
-                <h2>Top picks for Austin</h2>
-                <p>A live shortlist across restaurants, cafes, and bars — scored for quality, confidence, and value.</p>
-            </div>
-        </div>
-        """,
+        '<div class="ap-section-hdr">'
+        "<h2>Top picks for Austin</h2>"
+        "<p>A live shortlist across restaurants, cafes, and bars — scored for quality, confidence, and value.</p>"
+        "</div>",
         unsafe_allow_html=True,
     )
 
     if "top_pick_roles" not in st.session_state:
         with st.spinner("Finding Austin's standouts…"):
             candidates = load_top_pick_candidates()
-            roles = select_top_pick_roles(candidates)
-            places = [place for _, place in roles]
+            roles      = select_top_pick_roles(candidates)
+            places     = [p for _, p in roles]
             try:
                 blurbs = generate_place_blurbs(places)
             except AgentError as exc:
@@ -341,8 +376,9 @@ def show_top_picks() -> None:
                 for label, place in roles
             ]
 
-    roles = st.session_state.get("top_pick_roles", [])
+    roles   = st.session_state.get("top_pick_roles", [])
     warning = st.session_state.get("top_pick_agent_warning")
+
     if warning:
         st.info("Top picks are live, but AI explanations are unavailable right now.")
 
@@ -355,106 +391,104 @@ def show_top_picks() -> None:
         with col:
             render_place_card(place, label=label, explanation=blurb)
 
+    st.markdown('<div class="ap-section-footer"></div>', unsafe_allow_html=True)
+
 
 def show_agent_search() -> None:
-    st.markdown('<div class="ap-search-wrap">', unsafe_allow_html=True)
     st.markdown(
-        """
-        <div class="ap-section-header" style="padding:0 0 24px">
-            <h2>Ask the agent</h2>
-            <p>Tell me what you're in the mood for — I'll turn it into a focused Austin shortlist.</p>
-        </div>
-        """,
+        '<div class="ap-ask-hdr">'
+        "<h2>Ask the agent</h2>"
+        "<p>Tell me what you're in the mood for — I'll find the right Austin shortlist.</p>"
+        "</div>",
         unsafe_allow_html=True,
     )
 
+    st.markdown('<div class="ap-input-wrap">', unsafe_allow_html=True)
     query = st.text_input(
         "What are you looking for?",
-        placeholder='Try "quiet coffee shop good for working" or "best cheap brunch spot"',
+        placeholder='e.g. "quiet coffee shop good for working" or "best cheap brunch spot"',
         label_visibility="collapsed",
     )
-
-    if query.strip():
-        with st.spinner("Tuning the search to your taste…"):
-            try:
-                filters = parse_query(query.strip())
-            except AgentError:
-                filters = {
-                    "category": "any",
-                    "price_preference": "any",
-                    "theme": query.strip(),
-                    "refined_query": f"{query.strip()}, Austin TX",
-                }
-                st.info("AI is unavailable — using your request directly.")
-
-            try:
-                candidates = [
-                    enrich_place(place)
-                    for place in search_with_details(filters["refined_query"], page_size=20)
-                ]
-            except PlacesApiError as exc:
-                st.warning(str(exc))
-                st.markdown("</div>", unsafe_allow_html=True)
-                return
-
-            candidates = sorted(candidates, key=lambda p: p.get("score", 0), reverse=True)
-            if not candidates:
-                st.warning("No Austin places matched that request. Try a different phrase.")
-                st.markdown("</div>", unsafe_allow_html=True)
-                return
-
-            try:
-                explanations = choose_top_recommendations(query.strip(), candidates[:10])
-            except AgentError:
-                explanations = {}
-                st.info("Found live matches, but AI explanations are unavailable right now.")
-
-        results = [p for p in candidates if p.get("id") in explanations][:3]
-        if not results:
-            results = candidates[:3]
-
-        st.markdown(
-            f"""
-            <div class="ap-section-header" style="padding: 28px 0 20px">
-                <h2>Your Austin shortlist</h2>
-                <p>Based on: "{query.strip()}"</p>
-            </div>
-            """,
-            unsafe_allow_html=True,
-        )
-        cols = st.columns(len(results), gap="medium")
-        for col, place in zip(cols, results):
-            with col:
-                render_place_card(place, explanation=explanations.get(place.get("id")))
-
     st.markdown("</div>", unsafe_allow_html=True)
+
+    if not query.strip():
+        return
+
+    with st.spinner("Tuning the search to your taste…"):
+        try:
+            filters = parse_query(query.strip())
+        except AgentError:
+            filters = {
+                "category": "any",
+                "price_preference": "any",
+                "theme": query.strip(),
+                "refined_query": f"{query.strip()}, Austin TX",
+            }
+            st.info("AI query parsing unavailable — using your request directly.")
+
+        try:
+            candidates = [
+                enrich_place(p)
+                for p in search_with_details(filters["refined_query"], page_size=20)
+            ]
+        except PlacesApiError as exc:
+            st.warning(str(exc))
+            return
+
+        candidates = sorted(candidates, key=lambda p: p.get("score", 0), reverse=True)
+
+        if not candidates:
+            st.warning("No Austin places matched that — try a different phrase.")
+            return
+
+        try:
+            explanations = choose_top_recommendations(query.strip(), candidates[:10])
+        except AgentError:
+            explanations = {}
+            st.info("Found live matches, but AI explanations are unavailable right now.")
+
+    results = [p for p in candidates if p.get("id") in explanations][:3] or candidates[:3]
+
+    st.markdown(
+        f'<div class="ap-result-hdr">'
+        f"<h3>Your Austin shortlist</h3>"
+        f'<p>Based on: "{query.strip()}"</p>'
+        f"</div>",
+        unsafe_allow_html=True,
+    )
+
+    cols = st.columns(len(results), gap="medium")
+    for col, place in zip(cols, results):
+        with col:
+            render_place_card(place, explanation=explanations.get(place.get("id")))
+
+    st.markdown('<div class="ap-section-footer"></div>', unsafe_allow_html=True)
 
 
 def main() -> None:
-    # Hero
+    # ── hero ──
     st.markdown(
-        """
-        <div class="ap-hero">
-            <div class="ap-wordmark">Austin Picks</div>
-            <h1>Where Austin<br>eats tonight.</h1>
-            <p>Live recommendations across restaurants, cafes, and bars — scored by AI for quality, confidence, and value.</p>
-        </div>
-        """,
+        '<div class="ap-hero">'
+        '<div class="ap-wordmark">Austin Picks</div>'
+        "<h1>Where Austin<br>eats tonight.</h1>"
+        "<p>Live recommendations across restaurants, cafes, and bars —"
+        " scored by AI for quality, confidence, and value.</p>"
+        "</div>",
         unsafe_allow_html=True,
     )
 
-    # Top picks
+    # ── top picks ──
     try:
         show_top_picks()
     except PlacesApiError as exc:
-        st.markdown('<div class="ap-section">', unsafe_allow_html=True)
+        st.markdown('<div class="ap-section-hdr">', unsafe_allow_html=True)
         st.warning(str(exc))
         st.info("Once Google Places is connected, your live Austin picks will appear here.")
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<hr class="ap-divider">', unsafe_allow_html=True)
 
-    # Agent search
+    # ── agent search ──
     show_agent_search()
 
 
