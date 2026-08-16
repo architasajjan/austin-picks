@@ -10,7 +10,7 @@ from typing import Any
 import requests
 
 
-MODEL = "gemini-2.0-flash"
+MODEL = "gemini-flash-latest"
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/"
     f"models/{MODEL}:generateContent"
