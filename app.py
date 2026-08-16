@@ -392,9 +392,9 @@ def show_agent_search() -> None:
         with st.spinner("Finding your shortlist…"):
             try:
                 filters = parse_query(query.strip())
-            except AgentError:
+            except AgentError as exc:
                 filters = {"refined_query": f"{query.strip()}, Austin TX"}
-                st.info("AI parsing unavailable — using your request directly.")
+                st.warning(f"AI agent error: {exc}")
 
             try:
                 candidates = [
