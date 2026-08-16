@@ -10,7 +10,7 @@ from typing import Any
 import requests
 
 
-MODEL = "gemini-3-flash-preview"
+MODEL = "gemini-2.0-flash"
 GEMINI_URL = (
     "https://generativelanguage.googleapis.com/v1beta/"
     f"models/{MODEL}:generateContent"
@@ -48,9 +48,12 @@ def _generate_content(prompt: str) -> str:
             },
             timeout=45,
         )
-        response.raise_for_status()
+        if not response.ok:
+            raise AgentError(
+                f"Gemini API error {response.status_code}: {response.text[:300]}"
+            )
     except requests.RequestException as exc:
-        raise AgentError("Gemini could not complete that request. Check the Gemini key and account.") from exc
+        raise AgentError(f"Gemini network error: {exc}") from exc
 
     try:
         candidates = response.json().get("candidates", [])
