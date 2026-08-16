@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import html as _html
 from typing import Any
 
 import streamlit as st
@@ -24,227 +25,207 @@ st.markdown(
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
     html, body, [class*="css"] { font-family: 'Inter', sans-serif; }
-    .stApp { background: #0f0d0b; color: #f5f0eb; }
+    .stApp { background: #f7f4ef; color: #1a1714; }
 
-    /* hide Streamlit chrome */
     #MainMenu, footer, header { visibility: hidden; }
 
-    /* main content column — uniform horizontal padding */
-    .block-container {
-        padding: 0 !important;
-        max-width: 100% !important;
-    }
+    .block-container { padding: 0 !important; max-width: 100% !important; }
 
-    /* every Streamlit column group gets left/right padding */
     [data-testid="stHorizontalBlock"] {
-        padding: 0 64px;
-        gap: 20px !important;
+        padding: 0 56px;
+        gap: 16px !important;
+        align-items: stretch !important;
     }
 
-    /* ── hero ─────────────────────────────────── */
+    /* ── hero ── */
     .ap-hero {
-        background: linear-gradient(135deg, #1a1108 0%, #0f0d0b 60%);
-        border-bottom: 1px solid #2a2218;
-        padding: 56px 64px 52px;
+        background: linear-gradient(120deg, #fff8ef 0%, #f0ece6 100%);
+        border-bottom: 1px solid #e8e2d9;
+        padding: 48px 56px 44px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 32px;
     }
+    .ap-hero-left {}
     .ap-wordmark {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 700;
         letter-spacing: .2em;
         text-transform: uppercase;
         color: #c9813b;
-        margin-bottom: 22px;
+        margin-bottom: 14px;
     }
     .ap-hero h1 {
-        font-size: clamp(40px, 5vw, 68px);
+        font-size: clamp(36px, 4.5vw, 58px);
         font-weight: 800;
-        line-height: 1.04;
-        color: #f5f0eb;
-        margin: 0 0 18px;
+        line-height: 1.06;
+        color: #1a1714;
+        margin: 0 0 12px;
     }
     .ap-hero p {
-        font-size: 17px;
-        color: #7a6e63;
-        max-width: 480px;
-        line-height: 1.65;
+        font-size: 16px;
+        color: #8a7e73;
+        max-width: 420px;
+        line-height: 1.6;
         margin: 0;
     }
 
-    /* ── section wrapper ──────────────────────── */
-    .ap-section-hdr {
-        padding: 44px 64px 28px;
+    /* ── section header ── */
+    .ap-hdr {
+        padding: 36px 56px 20px;
     }
-    .ap-section-hdr h2 {
-        font-size: 22px;
+    .ap-hdr h2 {
+        font-size: 20px;
         font-weight: 700;
-        color: #f5f0eb;
-        margin: 0 0 5px;
+        color: #1a1714;
+        margin: 0 0 4px;
         letter-spacing: -.01em;
     }
-    .ap-section-hdr p {
-        font-size: 14px;
-        color: #5c5249;
+    .ap-hdr p {
+        font-size: 13px;
+        color: #a09689;
         margin: 0;
     }
 
-    /* padding below the cards grid */
-    .ap-section-footer { padding: 32px 0; }
+    /* ── divider ── */
+    .ap-divider { border: none; border-top: 1px solid #e8e2d9; margin: 0; }
 
-    /* ── divider ──────────────────────────────── */
-    .ap-divider {
-        border: none;
-        border-top: 1px solid #1a1612;
-        margin: 0;
-    }
-
-    /* ── search area ──────────────────────────── */
-    .ap-ask-hdr {
-        padding: 44px 64px 24px;
-    }
-    .ap-ask-hdr h2 {
-        font-size: 22px;
-        font-weight: 700;
-        color: #f5f0eb;
-        margin: 0 0 5px;
-        letter-spacing: -.01em;
-    }
-    .ap-ask-hdr p {
-        font-size: 14px;
-        color: #5c5249;
-        margin: 0;
-    }
-    .ap-input-wrap {
-        padding: 0 64px 48px;
-    }
-
-    /* input field */
-    .ap-input-wrap .stTextInput > div > div {
-        background: #13110d !important;
-        border: 1.5px solid #2a2218 !important;
-        border-radius: 10px !important;
-    }
-    .ap-input-wrap .stTextInput input {
-        background: transparent !important;
-        color: #f5f0eb !important;
-        font-size: 15px !important;
-        padding: 14px 18px !important;
-        caret-color: #c9813b;
-    }
-    .ap-input-wrap .stTextInput input:focus {
-        outline: none !important;
-    }
-    .ap-input-wrap .stTextInput > div > div:focus-within {
-        border-color: #c9813b !important;
-        box-shadow: 0 0 0 3px #c9813b14 !important;
-    }
-    .ap-input-wrap .stTextInput input::placeholder { color: #3d352d !important; }
-
-    /* ── pick badge ───────────────────────────── */
-    .ap-badge {
-        display: inline-block;
-        font-size: 10px;
-        font-weight: 700;
-        letter-spacing: .15em;
-        text-transform: uppercase;
-        padding: 3px 9px;
-        border-radius: 4px;
-        margin-bottom: 12px;
-    }
-    .badge-overall { background: #c9813b1a; color: #c9813b; border: 1px solid #c9813b33; }
-    .badge-brunch  { background: #c96b7a1a; color: #c96b7a; border: 1px solid #c96b7a33; }
-    .badge-value   { background: #5da5681a; color: #5da568; border: 1px solid #5da56833; }
-    .badge-gem     { background: #7b6ec61a; color: #a099e0; border: 1px solid #7b6ec633; }
-    .badge-search  { background: #3b82f61a; color: #7db5f7; border: 1px solid #3b82f633; }
-
-    /* ── place card ───────────────────────────── */
+    /* ── pick cards ── */
     .ap-card {
-        background: #131009;
-        border: 1px solid #231f18;
-        border-radius: 12px;
-        padding: 22px 22px 20px;
+        background: #fff;
+        border-radius: 14px;
+        padding: 20px 20px 18px;
         height: 100%;
         box-sizing: border-box;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 12px rgba(0,0,0,.04);
+        border-top: 4px solid var(--card-color, #c9813b);
+    }
+    .ap-badge {
+        display: inline-block;
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .16em;
+        text-transform: uppercase;
+        padding: 3px 8px;
+        border-radius: 4px;
+        margin-bottom: 10px;
+        color: var(--card-color, #c9813b);
+        background: var(--card-color-bg, #fff8ef);
     }
     .ap-card-name {
-        font-size: 17px;
+        font-size: 16px;
         font-weight: 700;
-        color: #f5f0eb;
-        margin: 0 0 5px;
+        color: #1a1714;
+        margin: 0 0 4px;
         line-height: 1.25;
     }
     .ap-card-meta {
         font-size: 12px;
-        color: #5c5249;
-        margin-bottom: 12px;
-        letter-spacing: .01em;
+        color: #b0a496;
+        margin-bottom: 10px;
     }
     .ap-rating-row {
         display: flex;
         align-items: center;
-        gap: 7px;
-        margin-bottom: 12px;
+        gap: 6px;
+        margin-bottom: 10px;
     }
-    .ap-stars  { color: #c9813b; font-size: 13px; letter-spacing: .04em; }
-    .ap-rating-num   { font-size: 14px; font-weight: 700; color: #f5f0eb; }
-    .ap-rating-count { font-size: 12px; color: #5c5249; }
+    .ap-stars { font-size: 12px; color: var(--card-color, #c9813b); }
+    .ap-rating-num   { font-size: 13px; font-weight: 700; color: #1a1714; }
+    .ap-rating-count { font-size: 11px; color: #b0a496; }
     .ap-blurb {
         font-size: 13px;
-        color: #8a7e73;
-        line-height: 1.65;
-        margin-bottom: 16px;
+        color: #6b6259;
+        line-height: 1.6;
+        margin-bottom: 14px;
     }
     .ap-map-link a {
-        display: inline-block;
         font-size: 12px;
         font-weight: 600;
-        color: #c9813b;
+        color: var(--card-color, #c9813b);
         text-decoration: none;
-        border: 1px solid #c9813b33;
+        border: 1.5px solid var(--card-color, #c9813b);
         border-radius: 6px;
-        padding: 6px 13px;
+        padding: 5px 12px;
+        opacity: .85;
     }
 
-    /* ── result sub-header ────────────────────── */
-    .ap-result-hdr {
-        padding: 28px 64px 20px;
+    /* card colour tokens */
+    .card-overall { --card-color:#d97706; --card-color-bg:#fef9ee; }
+    .card-brunch  { --card-color:#e11d48; --card-color-bg:#fff1f4; }
+    .card-value   { --card-color:#059669; --card-color-bg:#f0fdf8; }
+    .card-gem     { --card-color:#7c3aed; --card-color-bg:#f5f3ff; }
+    .card-search  { --card-color:#2563eb; --card-color-bg:#eff6ff; }
+
+    /* ── agent section ── */
+    .ap-ask {
+        padding: 28px 56px 32px;
+        background: #fff;
+        border-top: 1px solid #e8e2d9;
     }
-    .ap-result-hdr h3 {
-        font-size: 18px;
-        font-weight: 700;
-        color: #f5f0eb;
-        margin: 0 0 4px;
+    .ap-ask h2 { font-size: 17px; font-weight: 700; color: #1a1714; margin: 0 0 12px; }
+
+    /* input */
+    .ap-ask .stTextInput > div > div {
+        background: #f7f4ef !important;
+        border: 1.5px solid #e2dcd5 !important;
+        border-radius: 10px !important;
     }
-    .ap-result-hdr p {
-        font-size: 13px;
-        color: #5c5249;
-        margin: 0;
+    .ap-ask .stTextInput input {
+        background: transparent !important;
+        color: #1a1714 !important;
+        font-size: 14px !important;
+        padding: 11px 16px !important;
+    }
+    .ap-ask .stTextInput > div > div:focus-within {
+        border-color: #2563eb !important;
+        box-shadow: 0 0 0 3px #2563eb12 !important;
+    }
+    .ap-ask .stTextInput input::placeholder { color: #c4bdb5 !important; }
+
+    /* result sub-label */
+    .ap-result-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: #a09689;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+        padding: 16px 0 10px;
     }
 
-    /* ── spinner ──────────────────────────────── */
-    .stSpinner > div { border-top-color: #c9813b !important; }
+    /* columns padding inside ask section */
+    .ap-ask [data-testid="stHorizontalBlock"] { padding: 0 !important; }
 
-    /* ── alerts ───────────────────────────────── */
-    .stAlert { background: #13110d !important; border-color: #231f18 !important; }
+    /* spinner + alerts */
+    .stSpinner > div { border-top-color: #2563eb !important; }
+    .stAlert { background: #fff !important; border-color: #e8e2d9 !important; color: #1a1714 !important; }
     </style>
     """,
     unsafe_allow_html=True,
 )
 
-# ── helpers ───────────────────────────────────────────────────────────────────
+# ── constants ─────────────────────────────────────────────────────────────────
 
-BADGE_CLASS = {
-    "Best Overall": "badge-overall",
-    "Best Brunch":  "badge-brunch",
-    "Best Value":   "badge-value",
-    "Hidden Gem":   "badge-gem",
+CARD_CLASS = {
+    "Best Overall": "card-overall",
+    "Best Brunch":  "card-brunch",
+    "Best Value":   "card-value",
+    "Hidden Gem":   "card-gem",
 }
-
 STAR_MAP = {5: "★★★★★", 4: "★★★★☆", 3: "★★★☆☆", 2: "★★☆☆☆", 1: "★☆☆☆☆"}
+
+
+def _e(s: Any) -> str:
+    """HTML-escape any dynamic content so tags never bleed into the template."""
+    return _html.escape(str(s)) if s else ""
 
 
 def _stars(rating: float | None) -> str:
     return STAR_MAP.get(round(rating), "★★★★☆") if rating else ""
 
+
+# ── data helpers ──────────────────────────────────────────────────────────────
 
 def load_top_pick_candidates() -> list[dict[str, Any]]:
     queries = [
@@ -276,34 +257,26 @@ def select_top_pick_roles(places: list[dict[str, Any]]) -> list[tuple[str, dict[
         return best
 
     roles: list[tuple[str, dict[str, Any]]] = []
-
-    best_overall = choose(lambda _: True)
-    if best_overall:
-        roles.append(("Best Overall", best_overall))
-
-    best_brunch = choose(
+    if (p := choose(lambda _: True)):
+        roles.append(("Best Overall", p))
+    if (p := choose(
         lambda p: p.get("category", "").lower() in {"cafe", "coffee shop", "bakery"}
         or any("brunch" in t.lower() for t in p.get("types", []))
-    )
-    if best_brunch:
-        roles.append(("Best Brunch", best_brunch))
-
-    best_value = choose(
+    )):
+        roles.append(("Best Brunch", p))
+    if (p := choose(
         lambda p: p.get("price_level") in {"PRICE_LEVEL_FREE", "PRICE_LEVEL_INEXPENSIVE"}
         or p.get("price_display") in {"Free", "$"}
-    )
-    if best_value:
-        roles.append(("Best Value", best_value))
-
-    hidden_gem = choose(
-        lambda p: (p.get("rating") or 0) >= 4.3
-        and (p.get("user_rating_count") or 0) < 200
-    )
-    if hidden_gem:
-        roles.append(("Hidden Gem", hidden_gem))
-
+    )):
+        roles.append(("Best Value", p))
+    if (p := choose(
+        lambda p: (p.get("rating") or 0) >= 4.3 and (p.get("user_rating_count") or 0) < 200
+    )):
+        roles.append(("Hidden Gem", p))
     return roles
 
+
+# ── card renderer ─────────────────────────────────────────────────────────────
 
 def render_place_card(
     place: dict[str, Any],
@@ -311,41 +284,45 @@ def render_place_card(
     label: str | None = None,
     explanation: str | None = None,
 ) -> None:
-    badge_class = BADGE_CLASS.get(label or "", "badge-search")
-    badge_html  = f'<div class="ap-badge {badge_class}">{label}</div>' if label else ""
+    card_class = CARD_CLASS.get(label or "", "card-search")
 
-    name     = place.get("name", "Unnamed place")
-    category = place.get("category", "Place")
-    price    = place.get("price_display", "$$")
+    name     = _e(place.get("name", "Unnamed place"))
+    category = _e(place.get("category", "Place"))
+    price    = _e(place.get("price_display", "$$"))
     rating   = place.get("rating")
     count    = place.get("user_rating_count") or 0
-    body     = explanation or place.get("editorial_summary") or ""
-    maps_uri = place.get("google_maps_uri", "")
+    body     = _e(explanation or place.get("editorial_summary") or "")
+    maps_uri = _e(place.get("google_maps_uri", ""))
+    label_e  = _e(label) if label else ""
+
+    badge_html = f'<div class="ap-badge">{label_e}</div>' if label_e else ""
 
     if rating:
-        rating_html = f"""
-        <div class="ap-rating-row">
-            <span class="ap-stars">{_stars(rating)}</span>
-            <span class="ap-rating-num">{rating:.1f}</span>
-            <span class="ap-rating-count">({count:,} ratings)</span>
-        </div>"""
+        rating_html = (
+            f'<div class="ap-rating-row">'
+            f'<span class="ap-stars">{_stars(rating)}</span>'
+            f'<span class="ap-rating-num">{rating:.1f}</span>'
+            f'<span class="ap-rating-count">({count:,} ratings)</span>'
+            f"</div>"
+        )
     else:
-        rating_html = '<p class="ap-rating-count" style="margin-bottom:12px">Rating unavailable</p>'
+        rating_html = '<p class="ap-rating-count" style="margin-bottom:10px">Rating unavailable</p>'
 
     blurb_html = f'<p class="ap-blurb">{body}</p>' if body else ""
-    map_html   = f'<div class="ap-map-link"><a href="{maps_uri}" target="_blank">Open in Maps ↗</a></div>' if maps_uri else ""
+    map_html   = (
+        f'<div class="ap-map-link"><a href="{maps_uri}" target="_blank">Open in Maps ↗</a></div>'
+        if maps_uri else ""
+    )
 
     st.markdown(
-        f"""
-        <div class="ap-card">
-            {badge_html}
-            <div class="ap-card-name">{name}</div>
-            <div class="ap-card-meta">{category} &nbsp;·&nbsp; {price}</div>
-            {rating_html}
-            {blurb_html}
-            {map_html}
-        </div>
-        """,
+        f'<div class="ap-card {card_class}">'
+        f"{badge_html}"
+        f'<div class="ap-card-name">{name}</div>'
+        f'<div class="ap-card-meta">{category} · {price}</div>'
+        f"{rating_html}"
+        f"{blurb_html}"
+        f"{map_html}"
+        f"</div>",
         unsafe_allow_html=True,
     )
 
@@ -354,10 +331,8 @@ def render_place_card(
 
 def show_top_picks() -> None:
     st.markdown(
-        '<div class="ap-section-hdr">'
-        "<h2>Top picks for Austin</h2>"
-        "<p>A live shortlist across restaurants, cafes, and bars — scored for quality, confidence, and value.</p>"
-        "</div>",
+        '<div class="ap-hdr"><h2>Top picks for Austin</h2>'
+        "<p>Live shortlist across restaurants, cafes, and bars — scored for quality, confidence, and value.</p></div>",
         unsafe_allow_html=True,
     )
 
@@ -372,123 +347,102 @@ def show_top_picks() -> None:
                 st.session_state["top_pick_agent_warning"] = str(exc)
                 blurbs = {}
             st.session_state["top_pick_roles"] = [
-                (label, place, blurbs.get(place.get("id", "")))
-                for label, place in roles
+                (lbl, place, blurbs.get(place.get("id", "")))
+                for lbl, place in roles
             ]
 
     roles   = st.session_state.get("top_pick_roles", [])
     warning = st.session_state.get("top_pick_agent_warning")
-
     if warning:
-        st.info("Top picks are live, but AI explanations are unavailable right now.")
-
+        st.info("Top picks loaded — AI explanations unavailable right now.")
     if not roles:
-        st.warning("Couldn't find Austin places right now — try refreshing in a moment.")
+        st.warning("Couldn't find Austin places right now — try refreshing.")
         return
 
     cols = st.columns(len(roles), gap="medium")
-    for col, (label, place, blurb) in zip(cols, roles):
+    for col, (lbl, place, blurb) in zip(cols, roles):
         with col:
-            render_place_card(place, label=label, explanation=blurb)
+            render_place_card(place, label=lbl, explanation=blurb)
 
-    st.markdown('<div class="ap-section-footer"></div>', unsafe_allow_html=True)
+    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
 
 
 def show_agent_search() -> None:
-    st.markdown(
-        '<div class="ap-ask-hdr">'
-        "<h2>Ask the agent</h2>"
-        "<p>Tell me what you're in the mood for — I'll find the right Austin shortlist.</p>"
-        "</div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown('<div class="ap-ask">', unsafe_allow_html=True)
+    st.markdown("<h2>Ask the agent</h2>", unsafe_allow_html=True)
 
-    st.markdown('<div class="ap-input-wrap">', unsafe_allow_html=True)
     query = st.text_input(
-        "What are you looking for?",
-        placeholder='e.g. "quiet coffee shop good for working" or "best cheap brunch spot"',
+        "search",
+        placeholder='e.g. "quiet coffee shop for working" or "cheap brunch with outdoor seating"',
         label_visibility="collapsed",
     )
+
+    if query.strip():
+        with st.spinner("Finding your shortlist…"):
+            try:
+                filters = parse_query(query.strip())
+            except AgentError:
+                filters = {"refined_query": f"{query.strip()}, Austin TX"}
+                st.info("AI parsing unavailable — using your request directly.")
+
+            try:
+                candidates = [
+                    enrich_place(p)
+                    for p in search_with_details(filters["refined_query"], page_size=20)
+                ]
+            except PlacesApiError as exc:
+                st.warning(str(exc))
+                st.markdown("</div>", unsafe_allow_html=True)
+                return
+
+            candidates = sorted(candidates, key=lambda p: p.get("score", 0), reverse=True)
+            if not candidates:
+                st.warning("No matches — try a different phrase.")
+                st.markdown("</div>", unsafe_allow_html=True)
+                return
+
+            try:
+                explanations = choose_top_recommendations(query.strip(), candidates[:10])
+            except AgentError:
+                explanations = {}
+
+        results = [p for p in candidates if p.get("id") in explanations][:3] or candidates[:3]
+
+        st.markdown(
+            f'<div class="ap-result-label">Your shortlist for "{_e(query.strip())}"</div>',
+            unsafe_allow_html=True,
+        )
+        cols = st.columns(len(results), gap="medium")
+        for col, place in zip(cols, results):
+            with col:
+                render_place_card(place, explanation=explanations.get(place.get("id")))
+
+        st.markdown("<div style='height:16px'></div>", unsafe_allow_html=True)
+
     st.markdown("</div>", unsafe_allow_html=True)
-
-    if not query.strip():
-        return
-
-    with st.spinner("Tuning the search to your taste…"):
-        try:
-            filters = parse_query(query.strip())
-        except AgentError:
-            filters = {
-                "category": "any",
-                "price_preference": "any",
-                "theme": query.strip(),
-                "refined_query": f"{query.strip()}, Austin TX",
-            }
-            st.info("AI query parsing unavailable — using your request directly.")
-
-        try:
-            candidates = [
-                enrich_place(p)
-                for p in search_with_details(filters["refined_query"], page_size=20)
-            ]
-        except PlacesApiError as exc:
-            st.warning(str(exc))
-            return
-
-        candidates = sorted(candidates, key=lambda p: p.get("score", 0), reverse=True)
-
-        if not candidates:
-            st.warning("No Austin places matched that — try a different phrase.")
-            return
-
-        try:
-            explanations = choose_top_recommendations(query.strip(), candidates[:10])
-        except AgentError:
-            explanations = {}
-            st.info("Found live matches, but AI explanations are unavailable right now.")
-
-    results = [p for p in candidates if p.get("id") in explanations][:3] or candidates[:3]
-
-    st.markdown(
-        f'<div class="ap-result-hdr">'
-        f"<h3>Your Austin shortlist</h3>"
-        f'<p>Based on: "{query.strip()}"</p>'
-        f"</div>",
-        unsafe_allow_html=True,
-    )
-
-    cols = st.columns(len(results), gap="medium")
-    for col, place in zip(cols, results):
-        with col:
-            render_place_card(place, explanation=explanations.get(place.get("id")))
-
-    st.markdown('<div class="ap-section-footer"></div>', unsafe_allow_html=True)
 
 
 def main() -> None:
-    # ── hero ──
     st.markdown(
         '<div class="ap-hero">'
+        '<div class="ap-hero-left">'
         '<div class="ap-wordmark">Austin Picks</div>'
         "<h1>Where Austin<br>eats tonight.</h1>"
-        "<p>Live recommendations across restaurants, cafes, and bars —"
+        "<p>Live recs across restaurants, cafes, and bars —"
         " scored by AI for quality, confidence, and value.</p>"
-        "</div>",
+        "</div></div>",
         unsafe_allow_html=True,
     )
 
-    # ── top picks ──
     try:
         show_top_picks()
     except PlacesApiError as exc:
-        st.markdown('<div class="ap-section-hdr">', unsafe_allow_html=True)
+        st.markdown('<div class="ap-hdr">', unsafe_allow_html=True)
         st.warning(str(exc))
         st.info("Once Google Places is connected, your live Austin picks will appear here.")
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<hr class="ap-divider">', unsafe_allow_html=True)
-
-    # ── agent search ──
     show_agent_search()
 
 
