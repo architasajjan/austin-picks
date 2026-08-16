@@ -35,6 +35,16 @@ st.markdown(
         padding: 0 56px;
         gap: 16px !important;
         align-items: stretch !important;
+        margin-bottom: 0 !important;
+    }
+
+    /* strip Streamlit's default element spacing so sections butt together cleanly */
+    [data-testid="stVerticalBlock"] > [data-testid="element-container"] {
+        margin-bottom: 0 !important;
+    }
+    [data-testid="stVerticalBlock"] > div:has([data-testid="stHorizontalBlock"]) {
+        margin-bottom: 0 !important;
+        padding-bottom: 0 !important;
     }
 
     /* ── hero ── */
@@ -166,7 +176,10 @@ st.markdown(
     }
     .ap-ask h2 { font-size: 17px; font-weight: 700; color: #1a1714; margin: 0 0 12px; }
 
-    /* input */
+    /* input — capped width so it doesn't span the full screen */
+    .ap-ask .stTextInput {
+        max-width: 480px !important;
+    }
     .ap-ask .stTextInput > div > div {
         background: #f7f4ef !important;
         border: 1.5px solid #e2dcd5 !important;
@@ -363,8 +376,6 @@ def show_top_picks() -> None:
     for col, (lbl, place, blurb) in zip(cols, roles):
         with col:
             render_place_card(place, label=lbl, explanation=blurb)
-
-    st.markdown("<div style='height:32px'></div>", unsafe_allow_html=True)
 
 
 def show_agent_search() -> None:
