@@ -10,33 +10,37 @@ from typing import Any
 import requests
 
 
-MODEL = "gemini-flash-latest"
-GEMINI_URL = (
-    "https://generativelanguage.googleapis.com/v1beta/"
-    f"models/{MODEL}:generateContent"
-)
-
-
 class AgentError(RuntimeError):
     """Raised when Gemini cannot complete an agent task."""
 
 
-def _api_key() -> str:
-    """Read the Gemini key at request time so secrets are never hardcoded."""
-    api_key = os.environ.get("GEMINI_API_KEY", "").strip()
-    if not api_key:
-        raise AgentError("Gemini is not connected yet. Add GEMINI_API_KEY to use Ask the Agent.")
-    return api_key
+def _gemini_endpoint() -> tuple[str, str]:
+    """Return (url, api_key) using the Replit proxy when available, direct API as fallback."""
+    proxy_base = os.environ.get("AI_INTEGRATIONS_GEMINI_BASE_URL", "").strip()
+    proxy_key = os.environ.get("AI_INTEGRATIONS_GEMINI_API_KEY", "").strip()
+    if proxy_base and proxy_key:
+        return (
+            f"{proxy_base}/models/gemini-3-flash-preview:generateContent",
+            proxy_key,
+        )
+    direct_key = os.environ.get("GEMINI_API_KEY", "").strip()
+    if not direct_key:
+        raise AgentError("Gemini is not connected yet — add GEMINI_API_KEY to use Ask the Agent.")
+    return (
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent",
+        direct_key,
+    )
 
 
 def _generate_content(prompt: str) -> str:
     """Call Gemini generateContent and return its text response."""
+    url, api_key = _gemini_endpoint()
     try:
         response = requests.post(
-            GEMINI_URL,
+            url,
             headers={
                 "Content-Type": "application/json",
-                "x-goog-api-key": _api_key(),
+                "x-goog-api-key": api_key,
             },
             json={
                 "contents": [{"role": "user", "parts": [{"text": prompt}]}],
@@ -46,7 +50,7 @@ def _generate_content(prompt: str) -> str:
                     "temperature": 0.3,
                 },
             },
-            timeout=45,
+            timeout=30,
         )
         if not response.ok:
             raise AgentError(
